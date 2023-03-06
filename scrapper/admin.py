@@ -8,7 +8,7 @@ class CompanyAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'company_size')
     list_display_links = ('name',)
     list_filter = ('company_size',)
-    search_fields = ('name', 'high_concept')
+    search_fields = ('id', 'name', 'high_concept')
     search_help_text = _('Searching by name and short description')
 
 @admin.register(models.JobVacancy)
@@ -16,7 +16,7 @@ class JobVacancyAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'company_name', 'company_size', 'job_type', 'remote', 'location_names', 'currency', 'salary', 'equity', 'created_at')
     list_display_links = ('title',)
     list_filter = ('job_type', 'remote', 'currency', 'company__name', 'company__company_size')
-    search_fields = ('title', 'description')
+    search_fields = ('id', 'title', 'description')
     search_help_text = _('Searching by title and description')
     save_on_top = True
 

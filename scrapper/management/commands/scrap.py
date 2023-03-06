@@ -1,3 +1,4 @@
+import random
 from django.utils.translation import gettext_lazy as _
 from django.core.management import BaseCommand, CommandError
 from scrapper.scrapyfly_api import scrape_search
@@ -39,10 +40,12 @@ class Command(BaseCommand):
             self.stdout.write(self.style.HTTP_INFO("Start scrapping with query role: {}, location:{}".format(role, location)))
             result = scrape_search(role=role, location=location)
             page_count = int(result['query']['pageCount'])
+            pages = list(range(1, page_count+1))
+            random.shuffle(pages)
             self.stdout.write(self.style.HTTP_INFO("Initial page scrapped"))
 
             self.stdout.write(self.style.HTTP_INFO("It will be scrapped pages {} in total by this query".format(page_count)))
-            for page in range(1, page_count+1):
+            for page in pages:
                 if page == 1:
                     self.stdout.write(self.style.HTTP_INFO("Start saving scrapped data from page number {}".format(page)))
                     record_companies(result['data'])
