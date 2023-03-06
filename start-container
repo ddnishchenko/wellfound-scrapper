@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ ! -z "$WWWUSER" ]; then
+    usermod -u $WWWUSER sail
+fi
+
+if [ $# -gt 0 ]; then
+    exec gosu $WWWUSER "$@"
+else
+    exec gunicorn --bind 0.0.0.0:8000 wellfound_scrapper.wsgi
+fi
