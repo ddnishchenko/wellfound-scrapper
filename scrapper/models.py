@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.contrib.postgres.fields import ArrayField, DecimalRangeField
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 class JobVacancy(models.Model):
     
@@ -68,6 +69,9 @@ class JobVacancy(models.Model):
         help_text=_('Equity'),
     )
 
+    def __str__(self) -> str:
+        return self.title + " #(" + self.id + ")"
+
 
 class Company(models.Model):
 
@@ -94,3 +98,25 @@ class Company(models.Model):
     )
     logo_url = models.URLField(blank=True)
 
+    def __str__(self) -> str:
+        return self.name + " #(" + self.id + ")"
+
+class SearchTerm(models.Model):
+    slug = models.SlugField(
+        primary_key=True,
+        max_length=255,
+        help_text=_('Slug of the search term')
+    )
+    name = models.CharField(
+        max_length=255,
+        blank=False,
+        help_text=_('Search term')
+    )
+
+    scrapped_at = models.DateTimeField(
+        default=timezone.now,
+        help_text=_('Scrapped at')
+    )
+
+    def __str__(self) -> str:
+        return self.name + " #(" + self.slug + ")"

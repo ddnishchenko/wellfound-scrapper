@@ -14,17 +14,17 @@ api_base = SCRAPYFLY_TARGET
 def parse_job_compensation(data: str):
     if not data or type(data) is not str:
         raise Exception('The "data" parameter should be type of string with at least 1 char')
-    only_numbers = re.findall(r'\d+\.*\d*', data)
+    only_numbers = re.findall(r'\d+[\.,]*\d*', data)
 
     currency = data[0]
     res = {'currency': currency, 'salary': None, 'equity': None}
     if len(only_numbers) == 1:
-        salary = float(only_numbers[0])
+        salary = float(only_numbers[0].replace(',', ''))
         res.update({'salary': (salary, salary)})
 
     if len(only_numbers) > 1: 
-        salary_min = float(only_numbers[0])
-        salary_max = float(only_numbers[1])
+        salary_min = float(only_numbers[0].replace(',', ''))
+        salary_max = float(only_numbers[1].replace(',', ''))
         res.update({'salary': (salary_min, salary_max)})
 
     if len(only_numbers) > 3:
@@ -78,7 +78,7 @@ def extract_apollo_state(result: ScrapeApiResponse):
     return graph
 
 
-def scrape_search(role: str = "", location: str = "", page: int = 0):
+def scrape_search(role: str = "", location: str = "remote", page: int = 0):
     """scrape angel.co search"""
     client = ScrapflyClient(api_key)
     # angel.co has 3 types of search urls: for roles, for locations and for combination of both
@@ -86,9 +86,9 @@ def scrape_search(role: str = "", location: str = "", page: int = 0):
         url = f"https://angel.co/role/r/{role}"
     elif role and location and location != 'remote':
         url = f"https://angel.co/role/l/{role}/{location}"
-    elif role:
+    elif role and not location:
         url = f"https://angel.co/role/{role}"
-    elif location:
+    elif location and not role:
         url = f"https://angel.co/location/{location}"
     else:
         raise ValueError("need to pass either role or location argument to scrape search")

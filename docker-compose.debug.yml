@@ -3,6 +3,12 @@ volumes:
   pg_database:
   pg_admin:
 services:
+  proxy:
+    image: ./proxy
+    ports:
+      - "1337:80"
+    depends_on:
+      - wellfoundscrapper
   wellfoundscrapper:
     image: wellfoundscrapper
     build:

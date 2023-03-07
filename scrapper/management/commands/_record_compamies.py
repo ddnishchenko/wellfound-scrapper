@@ -12,22 +12,25 @@ def record_companies(companies):
                 'logo_url' :c['logoUrl'],
             }
         )
-
         for j in c['jobListings']:
-            job, created_job = JobVacancy.objects.update_or_create(
-                id=j['id'],
-                defaults={
-                    'created_at': j['created_at'],
-                    'title': j['title'],
-                    'slug': j['slug'],
-                    'source_url': j['source_url'],
-                    'description': j['description'],
-                    'job_type': j['jobType'],
-                    'remote': j['remote'],
-                    'location_names': j['locationNames'],
-                    'currency': j['currency'],
-                    'salary': j['salary'],
-                    'equity': j['equity'],
-                    'company': company,
-                }
-            )
+            try:
+                job, created_job = JobVacancy.objects.update_or_create(
+                    id=j['id'],
+                    defaults={
+                        'created_at': j['created_at'],
+                        'title': j['title'],
+                        'slug': j['slug'],
+                        'source_url': j['source_url'],
+                        'description': j['description'],
+                        'job_type': j['jobType'],
+                        'remote': j['remote'],
+                        'location_names': j['locationNames'],
+                        'currency': j['currency'],
+                        'salary': j['salary'],
+                        'equity': j['equity'],
+                        'company': company,
+                    }
+                )
+            except Exception as e:
+                print(j)
+                raise e

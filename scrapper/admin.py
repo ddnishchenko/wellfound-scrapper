@@ -1,15 +1,10 @@
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 from django.contrib import admin
+from django.core.management import call_command
 from scrapper import models
-# Register your models here.
+from scrapper.management.commands import scrap
 
-@admin.register(models.Company)
-class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'company_size')
-    list_display_links = ('name',)
-    list_filter = ('company_size',)
-    search_fields = ('id', 'name', 'high_concept')
-    search_help_text = _('Searching by name and short description')
 
 @admin.register(models.JobVacancy)
 class JobVacancyAdmin(admin.ModelAdmin):
@@ -32,3 +27,27 @@ class JobVacancyAdmin(admin.ModelAdmin):
                 return label
         return 'Unknown'
 
+@admin.register(models.Company)
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'company_size')
+    list_display_links = ('name',)
+    list_filter = ('company_size',)
+    search_fields = ('id', 'name', 'high_concept')
+    search_help_text = _('Searching by name and short description')
+
+
+@admin.action()
+def scrap_vacancies(modeladmin, request, queryset):
+    for query in queryset:
+        call_command(scrap.Command(), query.slug, 'remote')
+        query.scrapped_at = timezone.now()
+        query.save()
+
+@admin.register(models.SearchTerm)
+class SearchTermAdmin(admin.ModelAdmin):
+    actions = [scrap_vacancies]
+    list_display = ('name', 'slug', 'scrapped_at')
+    list_display_links = ('name',)
+    list_filter = ('name',)
+    search_fields = ('name', 'slug')
+    search_help_text = _('Searching by name and slug')
