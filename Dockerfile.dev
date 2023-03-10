@@ -1,0 +1,16 @@
+FROM registry.itera-research.com:443/rockylinux:8.5
+
+RUN dnf update -y
+
+RUN dnf install -y gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget make
+
+RUN wget https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz && \
+    tar -xf Python-3.10.10.tgz
+
+WORKDIR /Python-3.10.10
+
+RUN ./configure --enable-optimizations && \
+    make -j 4 && \
+    make altinstall
+
+RUN ln -s /usr/local/bin/python3.10 /usr/local/bin/python
