@@ -13,4 +13,8 @@ RUN ./configure --enable-optimizations && \
     make -j 4 && \
     make altinstall
 
-RUN ln -s /usr/local/bin/python3.10 /usr/local/bin/python
+WORKDIR /
+RUN rm -rf /Python-3.10.10
+
+RUN ln -s /usr/local/bin/python3.10 /usr/local/bin/python && \
+    ln -s /usr/local/bin/pip3.10 /usr/local/bin/pip
