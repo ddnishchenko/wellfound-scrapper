@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cron',
     'rest_framework',
-    'scrapper.apps.ScrapperConfig'
+    'scrapper.apps.ScrapperConfig',
+    'home.apps.HomeConfig'
 ]
 
 MIDDLEWARE = [
