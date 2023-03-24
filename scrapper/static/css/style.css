@@ -1,0 +1,4 @@
+#toolbar form input[type="submit"] {
+    color: var(--body-bg);
+    background: var(--body-fg);
+}

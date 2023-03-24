@@ -1,7 +1,13 @@
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.core.management import call_command
+from django.shortcuts import redirect
+from django.forms import Media
+import logging
+
+logger = logging.getLogger(__name__)
+
 from scrapper import models
 from scrapper.management.commands import scrap
 
@@ -38,10 +44,25 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.action()
 def scrap_vacancies(modeladmin, request, queryset):
-    for query in queryset:
-        call_command(scrap.Command(), query.slug, 'remote')
-        query.scrapped_at = timezone.now()
-        query.save()
+    slugs = list()
+    try:
+        for query in queryset:
+            call_command(scrap.Command(), query.slug, 'remote')
+            slugs.append(query.slug)
+            query.scrapped_at = timezone.now()
+            query.save()
+        message = _('Vacancies has been successfuly scrapped')
+        modeladmin.message_user(request, message, level=messages.SUCCESS)
+    except Exception as e:
+        logger.error(e)
+        
+        message = 'Error during scrapping.\n'
+        if len(slugs):
+            slug_joined = ', '.join(slugs)
+            message = message + f"{slug_joined} has been successfully scrapped."
+        modeladmin.message_user(request, message, level=messages.ERROR)
+    
+    
 
 @admin.register(models.SearchTerm)
 class SearchTermAdmin(admin.ModelAdmin):
@@ -51,3 +72,8 @@ class SearchTermAdmin(admin.ModelAdmin):
     list_filter = ('name',)
     search_fields = ('name', 'slug')
     search_help_text = _('Searching by name and slug')
+    class Media:
+        css = {
+            'all': ('css/style.css',)
+        }
+        js = ('js/script.js',)
