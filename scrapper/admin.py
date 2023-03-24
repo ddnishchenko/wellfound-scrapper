@@ -45,9 +45,10 @@ class CompanyAdmin(admin.ModelAdmin):
 @admin.action()
 def scrap_vacancies(modeladmin, request, queryset):
     slugs = list()
+    print(request.user.email)
     try:
         for query in queryset:
-            call_command(scrap.Command(), query.slug, 'remote')
+            # call_command(scrap.Command(), query.slug, 'remote')
             slugs.append(query.slug)
             query.scrapped_at = timezone.now()
             query.save()

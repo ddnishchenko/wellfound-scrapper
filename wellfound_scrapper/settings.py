@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'django_cron',
     'rest_framework',
     'scrapper.apps.ScrapperConfig',
-    'home.apps.HomeConfig'
+    'home.apps.HomeConfig',
+    'wellfound_user.apps.WellfoundUserConfig',
 ]
 
 MIDDLEWARE = [
@@ -110,6 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# AUTH_USER_MODEL = 'wellfound_user.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
