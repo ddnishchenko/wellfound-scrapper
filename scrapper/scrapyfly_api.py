@@ -3,12 +3,6 @@ import json
 import re
 from loguru import logger as log
 from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient
-from wellfound_scrapper.settings import SCRAPYFLY_KEY, SCRAPYFLY_TARGET
-
-
-
-api_key = SCRAPYFLY_KEY
-api_base = SCRAPYFLY_TARGET
 
 
 def parse_job_compensation(data: str):
@@ -78,18 +72,19 @@ def extract_apollo_state(result: ScrapeApiResponse):
     return graph
 
 
-def scrape_search(role: str = "", location: str = "remote", page: int = 0):
+def scrape_search(api_key: str, role: str = "", location: str = "remote", page: int = 0):
     """scrape angel.co search"""
+    host = 'https://angel.co'
     client = ScrapflyClient(api_key)
     # angel.co has 3 types of search urls: for roles, for locations and for combination of both
     if role and location and location == 'remote':
-        url = f"https://angel.co/role/r/{role}"
+        url = f"{host}/role/r/{role}"
     elif role and location and location != 'remote':
-        url = f"https://angel.co/role/l/{role}/{location}"
+        url = f"{host}/role/l/{role}/{location}"
     elif role and not location:
-        url = f"https://angel.co/role/{role}"
+        url = f"{host}/role/{role}"
     elif location and not role:
-        url = f"https://angel.co/location/{location}"
+        url = f"{host}/location/{location}"
     else:
         raise ValueError("need to pass either role or location argument to scrape search")
     
