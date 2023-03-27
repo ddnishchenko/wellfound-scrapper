@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# AUTH_USER_MODEL = 'wellfound_user.User'
+AUTH_USER_MODEL = 'wellfound_user.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -137,9 +137,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # admins emails
 ADMINS = env.list('ADMINS')
-
-# Scrapyfly
-SCRAPYFLY_KEY = env('SCRAPYFLY_KEY')
-SCRAPYFLY_TARGET = env('SCRAPYFLY_TARGET')
-
-# Django Cron

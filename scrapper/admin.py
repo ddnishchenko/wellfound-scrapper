@@ -45,23 +45,26 @@ class CompanyAdmin(admin.ModelAdmin):
 @admin.action()
 def scrap_vacancies(modeladmin, request, queryset):
     slugs = list()
-    print(request.user.email)
-    try:
-        for query in queryset:
-            # call_command(scrap.Command(), query.slug, 'remote')
-            slugs.append(query.slug)
-            query.scrapped_at = timezone.now()
-            query.save()
-        message = _('Vacancies has been successfuly scrapped')
-        modeladmin.message_user(request, message, level=messages.SUCCESS)
-    except Exception as e:
-        logger.error(e)
-        
-        message = 'Error during scrapping.\n'
-        if len(slugs):
-            slug_joined = ', '.join(slugs)
-            message = message + f"{slug_joined} has been successfully scrapped."
+    if not request.user.scrapfly_key:
+        message = _('The "scrapfly key" is missing. Add scrapfly key in your user profile')
         modeladmin.message_user(request, message, level=messages.ERROR)
+    else:
+        try:
+            for query in queryset:
+                call_command(scrap.Command(), query.slug, 'remote', api_key=request.user.scrapfly_key)
+                slugs.append(query.slug)
+                query.scrapped_at = timezone.now()
+                query.save()
+            message = _('Vacancies has been successfuly scrapped')
+            modeladmin.message_user(request, message, level=messages.SUCCESS)
+        except Exception as e:
+            logger.error(e)
+            
+            message = 'Error during scrapping.\n'
+            if len(slugs):
+                slug_joined = ', '.join(slugs)
+                message = message + f"{slug_joined} has been successfully scrapped."
+            modeladmin.message_user(request, message, level=messages.ERROR)
     
     
 
